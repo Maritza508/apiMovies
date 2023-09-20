@@ -74,3 +74,5 @@ C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\ob
 C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\obj\Debug\net7.0\ApiPeliculas.pdb
 C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\obj\Debug\net7.0\ApiPeliculas.genruntimeconfig.cache
 C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\obj\Debug\net7.0\ref\ApiPeliculas.dll
+C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\bin\Debug\net7.0\AutoMapper.dll
+C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
