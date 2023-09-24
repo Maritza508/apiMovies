@@ -2,9 +2,7 @@
 using ApiPeliculas.Models.Dtos.Category;
 using ApiPeliculas.Repository.IRepository;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
 
 namespace ApiPeliculas.Controllers
 {

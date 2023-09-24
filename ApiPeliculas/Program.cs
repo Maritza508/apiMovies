@@ -14,6 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 //Agregamos los repositorios
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 
 //Agregamos la configuracion de AutoMapper
 builder.Services.AddAutoMapper(typeof(MoviesMapper));
