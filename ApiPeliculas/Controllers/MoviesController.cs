@@ -2,6 +2,7 @@
 using ApiPeliculas.Models.Dtos.Movie;
 using ApiPeliculas.Repository.IRepository;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiPeliculas.Controllers
@@ -19,6 +20,7 @@ namespace ApiPeliculas.Controllers
             _movieRepository = movieRepository;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -33,6 +35,7 @@ namespace ApiPeliculas.Controllers
             return Ok(moviesDto);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id:int}", Name = "GetByIdMovie")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -50,8 +53,10 @@ namespace ApiPeliculas.Controllers
             return Ok(movieDto);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(201, Type = typeof(MovieDto))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -77,7 +82,9 @@ namespace ApiPeliculas.Controllers
             return CreatedAtRoute("GetByIdMovie", new { id = movie.Id }, movie);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id:int}", Name = "UpdatePatchMovie")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(204)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -96,7 +103,9 @@ namespace ApiPeliculas.Controllers
             return CreatedAtRoute("GetByIdMovie", new { id = movie.Id }, movie);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}", Name = "DeleteMovie")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -117,6 +126,7 @@ namespace ApiPeliculas.Controllers
             return new JsonResult(new { success = true });
         }
 
+        [AllowAnonymous]
         [HttpGet("GetMovieByCategory/{id:int}")]
         public IActionResult GetMovieByCategory(int id)
         {
@@ -133,6 +143,7 @@ namespace ApiPeliculas.Controllers
             return Ok(movieList);
         }
 
+        [AllowAnonymous]
         [HttpGet("Search")]
         public IActionResult Search(string name)
         {
