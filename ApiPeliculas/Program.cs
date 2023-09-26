@@ -16,6 +16,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection"));
 });
 
+//Añadimos cache
+builder.Services.AddResponseCaching();
+
 //Agregamos los repositorios
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
@@ -76,7 +79,7 @@ builder.Services.AddSwaggerGen(options =>
             },
             new List<string>()
         }
-    });
+    }); 
 });
 
 //Soporte para CORS

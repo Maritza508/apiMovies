@@ -22,6 +22,7 @@ namespace ApiPeliculas.Controllers
 
         [AllowAnonymous]
         [HttpGet]
+        [ResponseCache(Location =ResponseCacheLocation.None, NoStore = true)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetAll()
@@ -37,6 +38,7 @@ namespace ApiPeliculas.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id:int}", Name = "GetById")]
+        [ResponseCache(Duration = 30)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
