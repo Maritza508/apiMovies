@@ -38,7 +38,8 @@ namespace ApiPeliculas.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id:int}", Name = "GetById")]
-        [ResponseCache(Duration = 30)]
+        //[ResponseCache(Duration = 30)]
+        [ResponseCache(CacheProfileName = "GlobalCacheConfiguration")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
