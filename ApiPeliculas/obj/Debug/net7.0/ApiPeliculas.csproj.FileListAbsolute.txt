@@ -79,3 +79,9 @@ C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\ob
 C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\bin\Debug\net7.0\Microsoft.Practices.ServiceLocation.dll
 C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\bin\Debug\net7.0\XAct.Core.PCL.dll
 C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\marit\Escritorio\Proyecto DotNet Peliculas\ApiPeliculas\ApiPeliculas\bin\Debug\net7.0\Microsoft.Extensions.Options.dll

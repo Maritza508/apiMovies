@@ -8,7 +8,7 @@ namespace ApiPeliculas.Models.Dtos.Movie
         public int Id { get; set; }
         [Required(ErrorMessage = "El nombre es obligatorio")]
         public string Name { get; set; }
-        public string ImagePath { get; set; }
+        public byte[] ImagePath { get; set; }
         [Required(ErrorMessage = "La descripción es obligatorio")]
         public string Description { get; set; }
         [Required(ErrorMessage = "La duración es obligatorio")]

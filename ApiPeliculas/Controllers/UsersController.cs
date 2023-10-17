@@ -1,5 +1,6 @@
 ﻿using ApiPeliculas.Models;
 using ApiPeliculas.Models.Dtos.Category;
+using ApiPeliculas.Models.Dtos.Role;
 using ApiPeliculas.Models.Dtos.User;
 using ApiPeliculas.Repository.Implementations;
 using ApiPeliculas.Repository.IRepository;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using XAct.Users;
 
 namespace ApiPeliculas.Controllers
 {
@@ -42,14 +44,31 @@ namespace ApiPeliculas.Controllers
             return Ok(usersDto);
         }
 
+        //[Authorize(Roles = "Admin")]
+        //[HttpGet]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        //[ProducesResponseType(StatusCodes.Status403Forbidden)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //public IActionResult GetAllRoles()
+        //{
+        //    var roles = _userRepository.GetAllRoles();
+        //    var rolesDto = new List<RoleDto>();
+        //    foreach (var rol in roles)
+        //    {
+        //        rolesDto.Add(_mapper.Map<RoleDto>(rol));
+        //    }
+
+        //    return Ok(rolesDto);
+        //}
+
         [Authorize(Roles = "Admin")]
-        [HttpGet("{id:int}", Name = "GetUserById")]
+        [HttpGet("{id}", Name = "GetUserById")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetUserById(int id)
+        public IActionResult GetUserById(string id)
         {
             var user = _userRepository.GetById(id);
             if (user is null)
@@ -77,7 +96,7 @@ namespace ApiPeliculas.Controllers
                 return BadRequest(_responseApi);
             }
 
-            var user = _userRepository.Register(userRegisterDto);
+            var user = await _userRepository.Register(userRegisterDto);
             if (user is null)
             {
                 _responseApi.HttpStatusCode = HttpStatusCode.BadRequest;

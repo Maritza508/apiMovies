@@ -1,21 +1,26 @@
 using ApiPeliculas.Data;
+using ApiPeliculas.Models;
 using ApiPeliculas.MoviesMappers;
 using ApiPeliculas.Repository.Implementations;
 using ApiPeliculas.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
+  var builder = WebApplication.CreateBuilder(args);
 
 //Db connection
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection"));
 });
+
+//Soporte para autenticacion con .net Identity 
+builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
 //Añadimos cache
 builder.Services.AddResponseCaching();

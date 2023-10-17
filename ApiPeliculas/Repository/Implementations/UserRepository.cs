@@ -1,7 +1,12 @@
 ﻿using ApiPeliculas.Data;
 using ApiPeliculas.Models;
+using ApiPeliculas.Models.Dtos.Role;
 using ApiPeliculas.Models.Dtos.User;
 using ApiPeliculas.Repository.IRepository;
+using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,24 +19,45 @@ namespace ApiPeliculas.Repository.Implementations
     {
         private readonly ApplicationDbContext _context;
         private string secretKey;
-        public UserRepository(ApplicationDbContext context, IConfiguration configuration)
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IMapper _mapper;
+        public UserRepository(ApplicationDbContext context, IConfiguration configuration, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper)
         {
             _context = context;
             secretKey = configuration.GetValue<string>("ApiSettings:SecretKey");
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _mapper = mapper;
         }
-        public ICollection<User> GetAll()
+        public ICollection<AppUser> GetAll()
         {
-           return _context.Users.OrderByDescending(p => p.Name).ToList();
+           return _context.AppUsers.OrderBy(p => p.UserName).ToList();
         }
 
-        public User GetById(int id)
+        public ICollection<RoleDto> GetAllRoles()
         {
-            return _context.Users.FirstOrDefault(p => p.Id == id);
+            var roleDtos = _roleManager.Roles
+                .OrderBy(p => p.Name)
+                .Select(role => new RoleDto
+                {
+                    Id = role.Id,
+                    Name = role.Name,
+                    // Agrega otras propiedades de RoleDto según sea necesario
+                })
+                .ToList();
+
+            return roleDtos;
+        }
+
+        public AppUser GetById(string id)
+        {
+            return _context.AppUsers.FirstOrDefault(p => p.Id == id);
         }
 
         public bool IsUnique(string user)
         {
-            var userExist = _context.Users.FirstOrDefault(u => u.Name == user);
+            var userExist = _context.AppUsers.FirstOrDefault(u => u.UserName == user);
             if (userExist == null)
             {
                 return true;
@@ -39,42 +65,37 @@ namespace ApiPeliculas.Repository.Implementations
             return false;
         }
 
-        public async Task<User> Register(UserRegisterDto userRegisterDto)
+        public async Task<UserDataDto> Register(UserRegisterDto userRegisterDto)
         {
-            var encryptPassword = Getmd5(userRegisterDto.Password);
-            User user = new User()
+            AppUser user = new AppUser()
             {
                 UserName = userRegisterDto.UserName,
+                Email = userRegisterDto.UserName,   
+                NormalizedEmail = userRegisterDto.UserName.ToUpper(),
                 Name = userRegisterDto.Name,
-                Password = encryptPassword,
-                Role = userRegisterDto.Role
             };
 
-            _context.Add(user);
-            await _context.SaveChangesAsync();
-            user.Password = encryptPassword;
-            return user;
-        }
-
-
-        //Método para encriptar contraseña con MD5 se usa tanto en el Acceso como en el Registro
-        public static string Getmd5(string valor)
-        {
-            MD5CryptoServiceProvider x = new MD5CryptoServiceProvider();
-            byte[] data = System.Text.Encoding.UTF8.GetBytes(valor);
-            data = x.ComputeHash(data);
-            string resp = "";
-            for (int i = 0; i < data.Length; i++)
-                resp += data[i].ToString("x2").ToLower();
-            return resp;
+            var result = await _userManager.CreateAsync(user, userRegisterDto.Password);
+            if (result.Succeeded)
+            {
+                if (!_roleManager.RoleExistsAsync("Admin").GetAwaiter().GetResult()) 
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                    await _roleManager.CreateAsync(new IdentityRole("Customer"));
+                }
+                    await _userManager.AddToRoleAsync(user, "Admin");
+                    var returnUser = _context.AppUsers.FirstOrDefault(p => p.UserName == userRegisterDto.UserName);
+                return _mapper.Map<UserDataDto>(returnUser);
+            }
+            return new UserDataDto();
         }
 
         public async Task<UserLoginResponseDto> Login(UserLoginDto userLoginDto)
         {
-            var encryptPassword = Getmd5(userLoginDto.Password);
-            var user = _context.Users.FirstOrDefault(u => u.UserName.ToLower() == userLoginDto.UserName.ToLower() && u.Password == encryptPassword);
+            var user = _context.AppUsers.FirstOrDefault(u => u.UserName.ToLower() == userLoginDto.UserName.ToLower());
+            bool isValidPassword = await _userManager.CheckPasswordAsync(user, userLoginDto.Password);
 
-            if (user is null)
+            if (user is null || isValidPassword == false)
             {
                 return new UserLoginResponseDto()
                 {
@@ -84,6 +105,7 @@ namespace ApiPeliculas.Repository.Implementations
             }
 
             //Existe usuario, procesamos login 
+            var roles = await _userManager.GetRolesAsync(user);
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(secretKey);
 
@@ -92,7 +114,7 @@ namespace ApiPeliculas.Repository.Implementations
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, user.UserName.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role)
+                    new Claim(ClaimTypes.Role, roles.FirstOrDefault())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(3),
                 SigningCredentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -101,7 +123,7 @@ namespace ApiPeliculas.Repository.Implementations
             UserLoginResponseDto userLoginResponseDto = new UserLoginResponseDto()
             {
                 Token = tokenHandler.WriteToken(token),
-                User = user
+                User = _mapper.Map<UserDataDto>(user)
             };
             return userLoginResponseDto;
         }
